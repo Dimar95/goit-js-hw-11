@@ -117,7 +117,7 @@ img {
   display: flex;
   flex-wrap: wrap;
   margin: 15px 15px 40px 15px;
-  width: calc((100% - 60px)/4.1);
+  width: calc((100% - 60px)/3.1);
 }
 
 .info{
