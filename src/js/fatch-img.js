@@ -1,12 +1,9 @@
 import axios from "axios";
-export async function fetchImg(e, incrementPage) {
-  const formRef = document.getElementById('search-form')
-  const inputData = e.currentTarget.searchQuery.value.trim();
+export async function fetchImg(inputData, incrementPage) {
     const BASE_URL = 'https://pixabay.com/api/'
     const KEY = 'key=32970540-84e885805fcb13ea237a5964c'
-
-      const response = await axios.get(`${BASE_URL}?${KEY}&q=${inputData}&image_type=photo&orientation=horizontal&safesearch=true&page=${incrementPage}&per_page=40`);
-      return response
+    return await axios.get(`${BASE_URL}?${KEY}&q=${inputData}&image_type=photo&orientation=horizontal&safesearch=true&page=${incrementPage}&per_page=3`);
+  
   }
 
 

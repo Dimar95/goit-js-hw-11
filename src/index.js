@@ -18,22 +18,31 @@ const refs = {
 }
 refs.formRef.addEventListener('submit',onSearch);
 
-async function onSearch(e) {
+function onSearch(e) {
   e.preventDefault()
+
   refs.galleryRef.innerHTML = "";
-  // const inputData = e.currentTarget.searchQuery.value.trim();
-  const newArrayImg = await fetchImg(e,incrementPage).then(data => data.data.hits)
-  if (newArrayImg.length === 0) {
-    Notify.failure(`❌ Sorry, there are no images matching your search query. Please try again.`);
-  }
-  onMarkupGallery(newArrayImg)
-  incrementPage += 1;
+  incrementPage = 1
+  const inputData = e.currentTarget.searchQuery.value.trim();
+  fetchImg(inputData, incrementPage).then(({data}) => data).then(onValidationTotalImg)
+
+  refs.LoadMoreRef.addEventListener('click', () => {
+    incrementPage += 1;
+    fetchImg(inputData, incrementPage).then(({data}) => data).then(onValidationTotalImg)
+  })
+  
 }
 
 function onMarkupGallery(imgArray) {
-  refs.galleryRef.innerHTML = imgArray.map(({webformatURL,tags, likes, views, comments, downloads}) => `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-  <div class="info">
+  console.log(imgArray);
+  refs.LoadMoreRef.classList.toggle('is-hidden')
+  if (imgArray.length === 0) {
+    Notify.failure(`❌ Sorry, there are no images matching your search query. Please try again.`);
+  return
+  }
+  refs.galleryRef.innerHTML = imgArray.map(({webformatURL,tags, likes, views, comments, downloads, largeImageURL}) => `<div class="photo-card">
+  <a class="gallery__item" href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy" />
+  <div class="info"></a>
     <p class="info-item">
       <b>${likes}</b></p>
     <p class="info-item">
@@ -42,16 +51,28 @@ function onMarkupGallery(imgArray) {
       <b>${comments}</b></p>
     <p class="info-item">
       <b>${downloads}</b></p></div></div>`).join('');
-  const lightbox = new SimpleLightbox('.gallery a', {
+      refs.LoadMoreRef.classList.remove('is-hidden')
+      galleryRef.addEventListener('click', currentImg)
+}
+
+
+  const onValidationTotalImg = (data) => {
+    if (data.totalHits === 0) {
+    Notify.failure(`Were sorry, but you've reached the end of search results.`);
+    }
+    onMarkupGallery(data.hits)
+  }
+
+  function currentImg(e) {
+    e.preventDefault();
+    if (e.target.nodeName !== 'IMG') {
+        return
+    }
+    const imgOriginalLink = e.target.parentNode.href;
+
+}
+const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
   captions: true,
   captionsData: 'alt'
-  });
-  onLoadMoreRef()
-
-}
-
-function onLoadMoreRef() {
-  refs.LoadMoreRef.classList.toggle('is-hidden')
-  refs.LoadMoreRef.addEventListener('click', onSearch);
-}
+});
