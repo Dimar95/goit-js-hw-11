@@ -4,6 +4,7 @@ import { fetchImg } from './js/fatch-img'
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
+
 let incrementPage = 1;
 
 Notify.init({
@@ -41,18 +42,24 @@ function onMarkupGallery(imgArray) {
   return
   }
   refs.galleryRef.innerHTML = imgArray.map(({webformatURL,tags, likes, views, comments, downloads, largeImageURL}) => `<div class="photo-card">
-  <a class="gallery__item" href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy" />
-  <div class="info"></a>
+  <a class="gallery__item" href="${largeImageURL}"><img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
+  <div class="info">
     <p class="info-item">
-      <b>${likes}</b></p>
+      <b>Likes:</b>${likes}</p>
     <p class="info-item">
-      <b>${views}</b></p>
+      <b>Views</b>${views}</p>
     <p class="info-item">
-      <b>${comments}</b></p>
+      <b>Comments</b>${comments}</p>
     <p class="info-item">
-      <b>${downloads}</b></p></div></div>`).join('');
+      <b>Downloads</b>${downloads}</p></div></div>`).join('');
+  const lightbox = new SimpleLightbox('.gallery a', {
+  captionDelay: 250,
+  captions: true,
+  captionsData: 'alt'
+})
       refs.LoadMoreRef.classList.remove('is-hidden')
-      galleryRef.addEventListener('click', currentImg)
+  galleryRef.addEventListener('click', currentImg)
+
 }
 
 
@@ -71,8 +78,3 @@ function onMarkupGallery(imgArray) {
     const imgOriginalLink = e.target.parentNode.href;
 
 }
-const lightbox = new SimpleLightbox('.gallery a', {
-  captionDelay: 250,
-  captions: true,
-  captionsData: 'alt'
-});
