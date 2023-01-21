@@ -6,6 +6,7 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 
 let incrementPage;
 let totalHits = 0;
+let inputData = null;
 
 Notify.init({
   timeout: 2000,
@@ -20,29 +21,34 @@ const refs = {
 
 refs.formRef.addEventListener('submit',onSearch);
 
-function onSearch(e) {
+async function onSearch(e) {
   e.preventDefault()
   refs.LoadMoreRef.classList.add('is-hidden')
   refs.galleryRef.innerHTML = "";
   incrementPage = 1
   totalHits = 0
-  const inputData = e.currentTarget.searchQuery.value.trim();
+
+  inputData = e.currentTarget.searchQuery.value.trim();
   
-  fetchImg(inputData, incrementPage).then(({ data }) => {
-    console.log(data)
-    if (data.totalHits !== 0) {
-    Notify.info(`Hooray! We found ${data.totalHits} images.`)
-    }return data}).then(onValidationTotalImg)
+  const fetch = await fetchImg(inputData, incrementPage)
+  if (fetch.totalHits !== 0) {
+    Notify.info(`Hooray! We found ${fetch.totalHits} images.`)
+  };
+  onValidationTotalImg(fetch);
+ 
 
-  refs.LoadMoreRef.addEventListener('click', ()=>{onLoadMore(inputData)});
-
+  // await ;
+  
+  
+  refs.LoadMoreRef.addEventListener('click', onLoadMore);
+  
 }
 
-function onLoadMore(inputData) {
-    incrementPage += 1;
-    fetchImg(inputData, incrementPage).then(({data}) => data).then(onValidationTotalImg)
-   
-  }
+async function onLoadMore() {
+  incrementPage += 1;
+  const fetch = await fetchImg(inputData, incrementPage);
+  onValidationTotalImg(fetch);
+};
 
 function onMarkupGallery(imgArray) {
 
@@ -68,7 +74,8 @@ function onMarkupGallery(imgArray) {
  
 }
 
-  const onValidationTotalImg = (data) => {
+const onValidationTotalImg = (data) => {
+
     if (data.hits.length === 0) {
       Notify.failure(`❌ Sorry, there are no images matching your search query. Please try again.`);
         return
@@ -95,3 +102,12 @@ window.scrollBy({
   behavior: "smooth",
 });
 }
+
+
+// const fetch = await fetchImg(inputData, incrementPage).then(({ data }) => {
+//     console.log(data)
+//     if (data.totalHits !== 0) {
+//       Notify.info(`Hooray! We found ${data.totalHits} images.`)
+//     } return data
+//   }).then(onValidationTotalImg);
+//   refs.LoadMoreRef.addEventListener('click', onLoadMore);
