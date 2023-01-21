@@ -28,7 +28,8 @@ function onSearch(e) {
   totalHits = 0
   const inputData = e.currentTarget.searchQuery.value.trim();
   
-  fetchImg(inputData, incrementPage).then(({data}) => {
+  fetchImg(inputData, incrementPage).then(({ data }) => {
+    console.log(data)
     if (data.totalHits !== 0) {
     Notify.info(`Hooray! We found ${data.totalHits} images.`)
     }return data}).then(onValidationTotalImg)
@@ -40,7 +41,7 @@ function onSearch(e) {
 function onLoadMore(inputData) {
     incrementPage += 1;
     fetchImg(inputData, incrementPage).then(({data}) => data).then(onValidationTotalImg)
-
+   
   }
 
 function onMarkupGallery(imgArray) {
@@ -61,8 +62,10 @@ function onMarkupGallery(imgArray) {
   captionDelay: 250,
   captions: true,
   captionsData: 'alt'
-}).refresh();
+  }).refresh();
+  onScroll()
 
+ 
 }
 
   const onValidationTotalImg = (data) => {
@@ -71,8 +74,7 @@ function onMarkupGallery(imgArray) {
         return
       }
     totalHits += data.hits.length
-    console.log(data);
-    console.log("🚀 ~ data.totalHits", data.totalHits);
+
   if (data.totalHits === totalHits) {
    refs.LoadMoreRef.classList.add('is-hidden')
     Notify.info(`Were sorry, but you've reached the end of search results.`)
@@ -80,6 +82,16 @@ function onMarkupGallery(imgArray) {
     refs.LoadMoreRef.classList.remove('is-hidden')
       }
     onMarkupGallery(data.hits)
+
   };
 
-
+function onScroll() {
+  if (incrementPage < 2) {
+    return
+  }
+ const cardHeight = refs.galleryRef.firstElementChild.getBoundingClientRect();
+window.scrollBy({
+  top: cardHeight.height * 2.5,
+  behavior: "smooth",
+});
+}
