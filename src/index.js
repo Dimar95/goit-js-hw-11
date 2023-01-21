@@ -29,9 +29,9 @@ function onSearch(e) {
   const inputData = e.currentTarget.searchQuery.value.trim();
   
   fetchImg(inputData, incrementPage).then(({data}) => {
+    if (data.totalHits !== 0) {
     Notify.info(`Hooray! We found ${data.totalHits} images.`)
-  
-    return data}).then(onValidationTotalImg)
+    }return data}).then(onValidationTotalImg)
 
   refs.LoadMoreRef.addEventListener('click', ()=>{onLoadMore(inputData)});
 
