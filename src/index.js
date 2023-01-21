@@ -102,12 +102,3 @@ window.scrollBy({
   behavior: "smooth",
 });
 }
-
-
-// const fetch = await fetchImg(inputData, incrementPage).then(({ data }) => {
-//     console.log(data)
-//     if (data.totalHits !== 0) {
-//       Notify.info(`Hooray! We found ${data.totalHits} images.`)
-//     } return data
-//   }).then(onValidationTotalImg);
-//   refs.LoadMoreRef.addEventListener('click', onLoadMore);
